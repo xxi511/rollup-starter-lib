@@ -5,10 +5,11 @@ import globals from "rollup-plugin-node-globals";
 import builtins from "rollup-plugin-node-builtins";
 import serve from "rollup-plugin-serve";
 import buble from "rollup-plugin-buble";
+import typescript from "rollup-plugin-typescript2";
 
 export default [
     {
-        input: "src/with3rd.js",
+        input: "src/with3rd.ts",
         output: {
             name: "bundle",
             file: "dist/bundle.js",
@@ -17,16 +18,21 @@ export default [
         },
         plugins: [
             json(),
-            globals(),
+
             builtins(),
             resolve({ browser: true }),
             commonjs({
                 namedExports: {
-                    "node_modules/twilio-video/es5/index.js": ["version"],
+                    "node_modules/twilio-video/es5/index.js": [
+                        "version",
+                        "LocalDataTrack",
+                    ],
                 },
             }),
-            buble(),
-            serve({ contentBase: "dist", port: 3000 }),
+            globals(),
+            typescript(),
+            buble({ transforms: { forOf: false } }),
+            serve({ contentBase: "dist", port: 4000 }),
         ],
     },
 ];
